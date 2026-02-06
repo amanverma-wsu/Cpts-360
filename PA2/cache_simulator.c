@@ -1,19 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Cache line structure for direct-mapped cache
 typedef struct {
     int valid;
     unsigned int tag;
 } CacheLine;
 
-// Cache structure
 typedef struct {
     CacheLine* lines;
     int num_lines;
     int block_size;
 } Cache;
 
+// Function prototypes
 Cache* create_cache(int cache_size, int block_size);
 void init_cache_lines(Cache* cache);
 void free_cache(Cache* cache);
@@ -36,7 +35,7 @@ int main(int argc, char* argv[]) {
     int block_size = atoi(argv[2]);
     char* filename = argv[3];
 
-    // Validate inputs
+    // Basic validation
     if (cache_size <= 0 || block_size <= 0) {
         printf("Error: Cache size and block size must be positive integers\n");
         return 1;
@@ -65,8 +64,8 @@ int main(int argc, char* argv[]) {
     int accesses = 0, hits = 0, misses = 0;
     unsigned int address;
 
-    // FIX: Starter code used %x which parsed decimal as hex (e.g., "12" -> 18)
-    // Using %i to auto-detect decimal, hex (0x), and octal (0) formats
+    // Fix: Starter code used %x which parsed decimal as hex (e.g., "12" -> 18)
+    // Using %i handles 0x prefix for hex or standard decimal automatically
     while (fscanf(fp, "%i", (int*)&address) == 1) {
         accesses++;
         if (access_cache(cache, address))
@@ -82,7 +81,6 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-// Allocate and initialize cache
 Cache* create_cache(int cache_size, int block_size) {
     Cache* cache = malloc(sizeof(Cache));
     if (!cache) return NULL;
@@ -100,7 +98,7 @@ Cache* create_cache(int cache_size, int block_size) {
     return cache;
 }
 
-// Set all cache lines to invalid
+// Ensure all lines start as "empty" (invalid)
 void init_cache_lines(Cache* cache) {
     for (int i = 0; i < cache->num_lines; i++) {
         cache->lines[i].valid = 0;
@@ -108,7 +106,6 @@ void init_cache_lines(Cache* cache) {
     }
 }
 
-// Free cache memory
 void free_cache(Cache* cache) {
     if (cache) {
         free(cache->lines);
@@ -116,7 +113,7 @@ void free_cache(Cache* cache) {
     }
 }
 
-// Simulate cache access, returns 1 for hit, 0 for miss
+// Logic: Check for hit first; if it's a miss, replace the line
 int access_cache(Cache* cache, unsigned int address) {
     unsigned int block_address = calculate_block_address(cache, address);
     unsigned int index = calculate_index(cache, block_address);
@@ -125,31 +122,31 @@ int access_cache(Cache* cache, unsigned int address) {
     if (is_cache_hit(cache, index, tag))
         return 1;
 
+    // Miss - update the line with new tag
     update_cache_line(cache, index, tag);
     return 0;
 }
 
-// Block address = address / block_size
+/* --- Address calculation helpers --- */
+
 unsigned int calculate_block_address(Cache* cache, unsigned int address) {
     return address / cache->block_size;
 }
 
-// Index = block_address % num_lines
+// Map the block to a specific cache slot (modulo)
 unsigned int calculate_index(Cache* cache, unsigned int block_address) {
     return block_address % cache->num_lines;
 }
 
-// Tag = block_address / num_lines
+// Remaining bits used to verify if we have the correct block
 unsigned int calculate_tag(Cache* cache, unsigned int block_address) {
     return block_address / cache->num_lines;
 }
 
-// Check if cache line is valid and tag matches
 int is_cache_hit(Cache* cache, unsigned int index, unsigned int tag) {
     return cache->lines[index].valid && cache->lines[index].tag == tag;
 }
 
-// Update cache line on miss
 void update_cache_line(Cache* cache, unsigned int index, unsigned int tag) {
     cache->lines[index].valid = 1;
     cache->lines[index].tag = tag;
