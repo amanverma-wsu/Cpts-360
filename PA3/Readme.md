@@ -3,13 +3,13 @@
 ## How to Compile and Run
 
 ```bash
-gcc -Wall pa3_scheduler.c -o pa3_scheduler
-./pa3_scheduler <input_file> <time_quantum>
+gcc -Wall pa3.c -o pa3
+./pa3 <input_file> <time_quantum>
 ```
 
 **Example:**
 ```bash
-./pa3_scheduler processes.txt 2
+./pa3 processes.txt 2
 ```
 
 ## Input Format
