@@ -1,0 +1,1 @@
+savedcmd_sysprog_counter.ko := ld -r -EL  -maarch64elf -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T /usr/src/linux-headers-6.17.0-8-generic/scripts/module.lds -o sysprog_counter.ko sysprog_counter.o sysprog_counter.mod.o .module-common.o
