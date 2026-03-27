@@ -107,3 +107,8 @@ static void __exit sysprog_exit(void)
 /* tells kernel which functions to call on load and unload */
 module_init(sysprog_init);
 module_exit(sysprog_exit);
+
+/* module information */
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Aman Verma");
+MODULE_DESCRIPTION("Kernel module exposing a read/write integer counter via /proc");
