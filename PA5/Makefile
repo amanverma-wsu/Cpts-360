@@ -4,7 +4,7 @@ TARGET = proxy
 
 all: $(TARGET)
 
-$(TARGET): proxy.c
+$(TARGET): Proxy.c
 	$(CC) $(CFLAGS) -o $(TARGET) proxy.c
 
 clean:
